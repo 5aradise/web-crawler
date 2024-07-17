@@ -5,11 +5,18 @@
   "main": "main.js",
   "type": "module",
   "scripts": {
-    "start": "node main.js"
+    "start": "node main.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+  },
+  "jest": {
+    "transform": {}
   },
   "keywords": [
     "web",
     "crawler"
   ],
-  "author": "5aradise"
+  "author": "5aradise",
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
 }
