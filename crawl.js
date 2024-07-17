@@ -25,4 +25,17 @@ const getURLs = (html, baseURL) => {
   return urls;
 };
 
-export { normalizeURL, getURLs };
+const crawl = async (baseUrl) => {
+  const res = await fetch(baseUrl);
+  if (!res.ok) {
+    throw new Error(`unsuccessful response (url:${baseUrl})`);
+  }
+  if (!res.headers.get('content-type').includes('html')) {
+    throw new Error('response does not contain html (url:${baseUrl})');
+  }
+
+  const html = await res.text();
+  return getURLs(html, baseUrl);
+};
+
+export { normalizeURL, getURLs, crawl };
