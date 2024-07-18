@@ -1,3 +1,5 @@
+'use strict';
+
 import { test, expect } from '@jest/globals';
 import { normalizeURL, getURLs } from './crawl.js';
 

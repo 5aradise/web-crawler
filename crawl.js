@@ -1,3 +1,5 @@
+'use strict';
+
 import { JSDOM } from 'jsdom';
 
 const normalizeURL = (url) => {
@@ -25,17 +27,42 @@ const getURLs = (html, baseURL) => {
   return urls;
 };
 
-const crawl = async (baseUrl) => {
-  const res = await fetch(baseUrl);
+const isSameDomain = (url1, url2) =>
+  new URL(url1).hostname === new URL(url2).hostname;
+
+const crawl = async (baseURL, currURL = baseURL, pages = new Map()) => {
+  let res;
+  try {
+    res = await fetch(currURL);
+  } catch (err) {
+    console.log(`Error to crawl ${currURL}: ${err.message}`);
+    return pages;
+  }
+
   if (!res.ok) {
-    throw new Error(`unsuccessful response (url:${baseUrl})`);
+    console.log(`unsuccessful response (url:${currURL})`);
+    return pages;
   }
   if (!res.headers.get('content-type').includes('html')) {
-    throw new Error('response does not contain html (url:${baseUrl})');
+    console.log(`response does not contain html (url:${currURL})`);
+    return pages;
   }
 
   const html = await res.text();
-  return getURLs(html, baseUrl);
+  const foundURLs = getURLs(html, currURL);
+  const to_crawl = [];
+  for (const url of foundURLs) {
+    const normalURL = normalizeURL(url);
+    if (!pages.has(normalURL)) {
+      pages.set(normalURL, 0);
+      if (isSameDomain(baseURL, currURL)) {
+        to_crawl.push(crawl(currURL, url, pages));
+      }
+    }
+    pages.set(normalURL, pages.get(normalURL) + 1);
+  }
+  await Promise.all(to_crawl);
+  return pages;
 };
 
 export { normalizeURL, getURLs, crawl };

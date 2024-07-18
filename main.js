@@ -1,3 +1,5 @@
+'use strict';
+
 import { crawl } from './crawl.js';
 
 const main = async () => {
@@ -8,7 +10,7 @@ const main = async () => {
 
   const baseURL = argv[2];
   const urls = await crawl(baseURL);
-  console.log(`Found urls: [${urls}]`);
+  console.log(urls);
 };
 
 main();
