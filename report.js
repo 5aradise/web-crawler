@@ -8,11 +8,11 @@ const makeReport = (baseURL, pages) => {
     totalURLs += count;
   }
 
-  let report = `*--------${baseURL}--------*\n`;
+  let report = `*-------- ${baseURL} --------*\n`;
   report += `Total found ${totalURLs} links\n`;
   report += `of which are unique: ${pages.size}\n`;
   report += reportBody;
-  report += '*------------------------*';
+  report += '*--------------------------------*';
   return report;
 };
 

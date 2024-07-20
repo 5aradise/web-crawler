@@ -34,8 +34,7 @@ const crawl = async (baseURL, currURL = baseURL, pages = new Map()) => {
   let res;
   try {
     res = await fetch(currURL);
-  } catch (err) {
-    console.log(`Error to crawl ${currURL}: ${err.message}`);
+  } catch {
     return pages;
   }
 
@@ -46,8 +45,22 @@ const crawl = async (baseURL, currURL = baseURL, pages = new Map()) => {
     return pages;
   }
 
-  const html = await res.text();
-  const foundURLs = getURLs(html, currURL);
+  console.log(`Crawling ${currURL}`);
+
+  let html;
+  try {
+    html = await res.text();
+  } catch {
+    return pages;
+  }
+
+  let foundURLs;
+  try {
+    foundURLs = getURLs(html, currURL);
+  } catch {
+    return pages;
+  }
+
   const toCrawl = [];
   for (const url of foundURLs) {
     const normalURL = normalizeURL(url);
