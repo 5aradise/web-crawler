@@ -1,6 +1,9 @@
 'use strict';
 
-import { crawl } from './crawl.js';
+import fs from 'fs';
+
+import { crawl, normalizeURL } from './crawl.js';
+import { makeReport } from './report.js';
 
 const main = async () => {
   const argv = process.argv;
@@ -9,8 +12,11 @@ const main = async () => {
   }
 
   const baseURL = argv[2];
-  const urls = await crawl(baseURL);
-  console.log(urls);
+  const pages = await crawl(baseURL);
+  const report = makeReport(baseURL, pages);
+  const reportFile = fs.createWriteStream(`report_${normalizeURL(baseURL)}.txt`);
+  reportFile.write(report);
+  reportFile.end();
 };
 
 main();

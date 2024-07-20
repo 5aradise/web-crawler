@@ -40,28 +40,26 @@ const crawl = async (baseURL, currURL = baseURL, pages = new Map()) => {
   }
 
   if (!res.ok) {
-    console.log(`unsuccessful response (url:${currURL})`);
     return pages;
   }
   if (!res.headers.get('content-type').includes('html')) {
-    console.log(`response does not contain html (url:${currURL})`);
     return pages;
   }
 
   const html = await res.text();
   const foundURLs = getURLs(html, currURL);
-  const to_crawl = [];
+  const toCrawl = [];
   for (const url of foundURLs) {
     const normalURL = normalizeURL(url);
     if (!pages.has(normalURL)) {
       pages.set(normalURL, 0);
       if (isSameDomain(baseURL, currURL)) {
-        to_crawl.push(crawl(currURL, url, pages));
+        toCrawl.push(crawl(currURL, url, pages));
       }
     }
     pages.set(normalURL, pages.get(normalURL) + 1);
   }
-  await Promise.all(to_crawl);
+  await Promise.all(toCrawl);
   return pages;
 };
 
